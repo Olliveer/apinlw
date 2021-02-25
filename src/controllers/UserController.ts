@@ -19,7 +19,7 @@ class UserController {
 
             await usersRepository.save(user);
 
-            res.status(200).json({ ...user, message: 'user registred' })
+            res.status(201).json({ ...user, message: 'user registred' })
 
         } catch (error) {
             if (error) {
