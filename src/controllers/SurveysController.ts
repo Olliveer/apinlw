@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
 import { getCustomRepository } from "typeorm";
+import { AppError } from "../errors/AppError";
 import { SurveysRepository } from "../repositories/SurveysRepositori";
 
 class SurveysController {
     async create(req: Request, res: Response) {
         try {
             const { title, description } = req.body;
-
-            console.log(req.body);
 
             const surveysRepository = getCustomRepository(SurveysRepository);
 
@@ -19,7 +18,7 @@ class SurveysController {
             await surveysRepository.save(survey);
             return res.status(201).json({ ...survey, message: 'survey created' });
         } catch (error) {
-            return res.status(400).send(error);
+            throw new AppError(error);
         }
     }
 
@@ -30,7 +29,7 @@ class SurveysController {
             const all = await surveysRepository.find();
             return res.status(200).json(all);
         } catch (error) {
-            return res.status(400).send(error);
+            throw new AppError(error);
         }
     }
 }

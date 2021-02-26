@@ -1,29 +1,51 @@
 import { Request, Response } from 'express';
 import { getCustomRepository } from 'typeorm';
 import { UsersRepository } from '../repositories/UsersRepository';
+import * as Yup from 'yup';
+import { AppError } from '../errors/AppError';
 
 class UserController {
     async create(req: Request, res: Response) {
         try {
-            const { name, email } = req.body;
+        const { name, email } = req.body;
 
-            const usersRepository = getCustomRepository(UsersRepository);
+        const schema = Yup.object().shape({
+            name: Yup.string().required(),
+            email: Yup.string().email().required()
+        })
 
-            const userExists = await usersRepository.findOne({ email });
-            console.log(userExists);
-            if (userExists) {
-                return res.status(400).json({ error: 'user already exists' });
-            }
+        // if (!(await schema.isValid(req.body))) {
+        //     return res.status(400).json({error: 'Validation fail'})
+        // }
 
-            const user = usersRepository.create({ name, email });
+        // schema.validate(req.body, { abortEarly: false })
+        // .catch((err) => {
+        //     return res.json({error: err.errors});
+        // })
 
-            await usersRepository.save(user);
+        try {
+            await schema.validate(req.body, { abortEarly: false });
+        } catch (err) {
+            throw new AppError(err.errors );
+        }
 
-            res.status(201).json({ ...user, message: 'user registred' })
+        const usersRepository = getCustomRepository(UsersRepository);
+
+        const userExists = await usersRepository.findOne({ email });
+        
+        if (userExists) {
+            throw new AppError('user already exists');
+        }
+
+        const user = usersRepository.create({ name, email });
+
+        await usersRepository.save(user);
+
+        res.status(201).json({ ...user, message: 'user registred' })
 
         } catch (error) {
             if (error) {
-                res.status(400).send('error on create user');
+                throw new AppError(error);
             }
         }
 
