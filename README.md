@@ -14,8 +14,8 @@
 ## 📌 Index
 
 - [About the project](#-About-the-project)
-- [Techs](#-techs)
 - [Backend Routes](#-Backend-Routes)
+- [Techs](#-techs)
 - [Installation and start](#-Installation-and-start)
 - [Contributions](#-Contributions)
 - [License](#-license)
@@ -56,7 +56,7 @@ $ git clone https://github.com/Olliveer/apinlw.git
 # Install dependencies
 $ yarn install
 
-# copy file .env.example and change URL
+# copy file .env.example, rename to .env and change URL
 $ URL_MAIL=URL/answers
 
 # Start server
